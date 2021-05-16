@@ -11,7 +11,7 @@ const initialState = {
   products: [],
   product: { reviews: [] },
   loading: false,
-  error: null,
+  error: '',
 };
 
 export const productReducer = (state = initialState, action) => {
