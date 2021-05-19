@@ -10,8 +10,6 @@ import {
 const initialState = {
   products: [],
   product: { reviews: [] },
-  loading: false,
-  error: '',
 };
 
 export const productReducer = (state = initialState, action) => {
