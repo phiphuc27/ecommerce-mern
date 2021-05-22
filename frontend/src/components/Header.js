@@ -35,6 +35,19 @@ const Header = () => {
                   <LinkContainer to='/profile'>
                     <NavDropdown.Item>Profile</NavDropdown.Item>
                   </LinkContainer>
+                  {userInfo.isAdmin && (
+                    <>
+                      <LinkContainer to='/admin/user'>
+                        <NavDropdown.Item>User Management</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to='/admin/product'>
+                        <NavDropdown.Item>Product Management</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to='/admin/order'>
+                        <NavDropdown.Item>Order Management</NavDropdown.Item>
+                      </LinkContainer>
+                    </>
+                  )}
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={logoutHandler}>
                     Logout
@@ -44,16 +57,12 @@ const Header = () => {
                 <>
                   <Nav.Item>
                     <LinkContainer to='/login'>
-                      <Nav.Link>
-                        <i className='fas fa-user'></i> Sign In
-                      </Nav.Link>
+                      <Nav.Link>Sign In</Nav.Link>
                     </LinkContainer>
                   </Nav.Item>
                   <Nav.Item>
                     <LinkContainer to='/register'>
-                      <Nav.Link>
-                        <i className='far fa-user'></i> Sign Up
-                      </Nav.Link>
+                      <Nav.Link>Sign Up</Nav.Link>
                     </LinkContainer>
                   </Nav.Item>
                 </>
