@@ -23,7 +23,6 @@ import {
   USER_UPDATE_SUCCESS,
   USER_UPDATE_FAIL,
   USER_UPDATE_RESET,
-  USER_DELETE_RESET,
 } from '../constants/userConstants';
 
 const initialState = {
@@ -41,9 +40,9 @@ export const userReducer = (state = initialState, action) => {
 
     case USER_DETAILS_REQUEST:
     case USER_UPDATE_PROFILE_REQUEST:
-      return { ...state, loading: true, updatedSuccess: false };
+      return { ...state, loading: true, updateSuccess: false };
     case USER_UPDATE_REQUEST:
-      return { ...state, updatedLoading: true, updatedSuccess: false };
+      return { ...state, updateLoading: true, updateSuccess: false };
 
     case USER_LIST_REQUEST:
     case USER_DELETE_REQUEST:
@@ -60,17 +59,17 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        updatedSuccess: true,
+        updateSuccess: true,
         userInfo: payload,
       };
 
     case USER_UPDATE_SUCCESS:
-      return { ...state, updatedLoading: false, updatedSuccess: true };
+      return { ...state, updateLoading: false, updateSuccess: true };
 
     case USER_LIST_SUCCESS:
       return { ...state, loading: false, users: payload };
     case USER_DELETE_SUCCESS:
-      return { ...state, loading: false, deletedSuccess: true };
+      return { ...state, loading: false, deleteSuccess: true };
 
     case USER_LOGIN_FAIL:
     case USER_REGISTER_FAIL:
@@ -80,16 +79,13 @@ export const userReducer = (state = initialState, action) => {
     case USER_DELETE_FAIL:
       return { ...state, loading: false, error: payload };
     case USER_UPDATE_FAIL:
-      return { ...state, updatedLoading: false, error: payload };
+      return { ...state, updateLoading: false, error: payload };
 
     case USER_UPDATE_PROFILE_RESET:
       return state;
 
     case USER_UPDATE_RESET:
-      return { ...state, users: [], user: null, updatedSuccess: false };
-
-    case USER_DELETE_RESET:
-      return { ...state, deletedSuccess: false };
+      return { ...state, users: [], user: null, updateSuccess: false };
 
     case USER_LOGOUT:
       return initialState;

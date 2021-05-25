@@ -5,27 +5,27 @@ import { Table, Button } from 'react-bootstrap';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { deleteUser, listUsers } from '../actions/userActions';
-import { USER_DELETE_RESET } from '../constants/userConstants';
 
 const UserListPage = ({ history }) => {
   const dispatch = useDispatch();
 
-  const { users, userInfo, loading, deletedSuccess, error } = useSelector(
+  const { users, userInfo, loading, deleteSuccess, error } = useSelector(
     (state) => state.user
   );
 
   useEffect(() => {
     if (!userInfo || !userInfo.isAdmin) {
       history.push('/');
-    } else if (!users || users.length === 0) {
+    } else {
       dispatch(listUsers());
     }
+  }, [dispatch, userInfo, history]);
 
-    if (deletedSuccess) {
+  useEffect(() => {
+    if (deleteSuccess) {
       dispatch(listUsers());
-      dispatch({ type: USER_DELETE_RESET });
     }
-  }, [dispatch, users, userInfo, history, deletedSuccess]);
+  }, [dispatch, deleteSuccess]);
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure?')) {

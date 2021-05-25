@@ -16,7 +16,7 @@ const ProfilePage = ({ history, location }) => {
 
   const dispatch = useDispatch();
 
-  const { loading, error, updatedSuccess, user, userInfo } = useSelector(
+  const { loading, error, updateSuccess, user, userInfo } = useSelector(
     (state) => state.user
   );
 
@@ -59,7 +59,7 @@ const ProfilePage = ({ history, location }) => {
         ) : error ? (
           <Message variant='danger'>{error}</Message>
         ) : (
-          updatedSuccess && <Message variant='success'>Profile Updated</Message>
+          updateSuccess && <Message variant='success'>Profile Updated</Message>
         )}
         {}
         {loading && <Loader />}

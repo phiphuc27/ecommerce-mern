@@ -17,12 +17,12 @@ const UserEditPage = ({ history, match }) => {
 
   const dispatch = useDispatch();
 
-  const { loading, error, user, updatedSuccess, updatedLoading } = useSelector(
+  const { loading, error, user, updateSuccess, updateLoading } = useSelector(
     (state) => state.user
   );
 
   useEffect(() => {
-    if (updatedSuccess) {
+    if (updateSuccess) {
       dispatch({ type: USER_UPDATE_RESET });
       history.push('/admin/user');
     } else {
@@ -34,7 +34,7 @@ const UserEditPage = ({ history, match }) => {
         setIsAdmin(user.isAdmin);
       }
     }
-  }, [user, dispatch, userId, updatedSuccess, history]);
+  }, [user, dispatch, userId, updateSuccess, history]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -84,10 +84,10 @@ const UserEditPage = ({ history, match }) => {
             </Form.Group>
 
             <div className='d-flex align-items-center'>
-              <Button type='submit' variant='primary' disabled={updatedLoading}>
+              <Button type='submit' variant='primary' disabled={updateLoading}>
                 Update
               </Button>
-              {updatedLoading && <Loader inline size='sm' />}
+              {updateLoading && <Loader inline size='sm' />}
             </div>
           </Form>
         )}
