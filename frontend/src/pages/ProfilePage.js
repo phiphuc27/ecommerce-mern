@@ -34,6 +34,7 @@ const ProfilePage = ({ history, location }) => {
         dispatch(getUserProfile('profile'));
         dispatch(getMyOrders());
       } else {
+        dispatch(getMyOrders());
         setName(user.name);
         setEmail(user.email);
       }

@@ -12,9 +12,11 @@ import ShippingPage from './pages/ShippingPage';
 import PaymentPage from './pages/PaymentPage';
 import PlaceOrderPage from './pages/PlaceOrderPage';
 import OrderPage from './pages/OrderPage';
-import UserListPage from './pages/UserListPage';
-import UserEditPage from './pages/UserEditPage';
-import ProductListPage from './pages/ProductListPage';
+import UserListPage from './pages/Admin/UserListPage';
+import UserEditPage from './pages/Admin/UserEditPage';
+import ProductListPage from './pages/Admin/ProductListPage';
+import ProductEditPage from './pages/Admin/ProductEditPage';
+import OrderListPage from './pages/Admin/OrderListPage';
 
 const App = () => {
   return (
@@ -34,6 +36,12 @@ const App = () => {
           <Route path='/admin/user' component={UserListPage} exact />
           <Route path='/admin/user/:id/edit' component={UserEditPage} exact />
           <Route path='/admin/product' component={ProductListPage} exact />
+          <Route
+            path='/admin/product/:id/edit'
+            component={ProductEditPage}
+            exact
+          />
+          <Route path='/admin/order' component={OrderListPage} exact />
           <Route path='/' component={HomePage} exact />
         </Container>
       </main>

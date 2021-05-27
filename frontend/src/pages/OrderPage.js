@@ -3,22 +3,42 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { PayPalButton } from 'react-paypal-button-v2';
-import { Col, Row, ListGroup, Image, Card } from 'react-bootstrap';
+import { Col, Row, ListGroup, Image, Card, Button } from 'react-bootstrap';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { getOrderDetails, payOrder } from '../actions/orderActions';
-import { ORDER_PAY_RESET } from '../constants/orderConstants';
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder,
+} from '../actions/orderActions';
+import { resetCart } from '../actions/cartActions';
+import {
+  ORDER_PAY_RESET,
+  ORDER_DELIVER_RESET,
+} from '../constants/orderConstants';
 
-const OrderPage = ({ match }) => {
+const OrderPage = ({ match, history }) => {
   const dispatch = useDispatch();
 
   const orderId = match.params.id;
 
   const [sdkReady, setSdkReady] = useState(false);
 
-  const { order, error, loading, loadingPay, success } = useSelector(
-    (state) => state.order
-  );
+  const { userInfo } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (!userInfo) history.push('/login');
+  }, [userInfo, history]);
+
+  const {
+    order,
+    error,
+    loading,
+    payLoading,
+    paySuccess,
+    deliverLoading,
+    deliverSuccess,
+  } = useSelector((state) => state.order);
   const {
     shippingAddress: { address, city, postalCode, country },
     orderItems,
@@ -52,7 +72,7 @@ const OrderPage = ({ match }) => {
       document.body.appendChild(script);
     };
 
-    if (!order._id || success) {
+    if (!order._id || paySuccess) {
       dispatch({ type: ORDER_PAY_RESET });
       dispatch(getOrderDetails(orderId));
     } else if (!order.isPaid) {
@@ -62,11 +82,27 @@ const OrderPage = ({ match }) => {
         setSdkReady(true);
       }
     }
-  }, [dispatch, orderId, success, order]);
+
+    if (order._id !== orderId) {
+      dispatch(getOrderDetails(orderId));
+    }
+  }, [dispatch, orderId, paySuccess, order]);
+
+  useEffect(() => {
+    if (deliverSuccess) {
+      dispatch({ type: ORDER_DELIVER_RESET });
+      dispatch(getOrderDetails(orderId));
+    }
+  }, [dispatch, deliverSuccess, orderId]);
 
   const successPaymentHandler = (paymentResult) => {
     console.log(paymentResult);
     dispatch(payOrder(orderId, paymentResult));
+    dispatch(resetCart());
+  };
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order));
   };
 
   return loading ? (
@@ -93,7 +129,10 @@ const OrderPage = ({ match }) => {
                 {address},{city} {postalCode}, {country}
               </p>
               {isDelivered ? (
-                <Message variant='success'>Delivered at {deliveredAt}</Message>
+                <Message variant='success'>
+                  Delivered at {deliveredAt.substring(0, 10)}{' '}
+                  {deliveredAt.substring(11, 19)}
+                </Message>
               ) : (
                 <Message variant='danger'>Not Delivered</Message>
               )}
@@ -105,7 +144,9 @@ const OrderPage = ({ match }) => {
                 {paymentMethod}
               </p>
               {isPaid ? (
-                <Message variant='success'>Paid on {paidAt}</Message>
+                <Message variant='success'>
+                  Paid on {paidAt.substring(0, 10)} {paidAt.substring(11, 19)}
+                </Message>
               ) : (
                 <Message variant='danger'>Not Paid</Message>
               )}
@@ -178,11 +219,11 @@ const OrderPage = ({ match }) => {
                   </Col>
                 </Row>
               </ListGroup.Item>
-              {!order.isPaid && (
+              {userInfo && userInfo._id === order.user._id && !order.isPaid && (
                 <ListGroup.Item>
-                  {loadingPay && <Loader />}
+                  {!payLoading && <Loader size='sm' className='mb-2' />}
                   {!sdkReady ? (
-                    <Loader />
+                    <Loader className='mb-2' />
                   ) : (
                     <PayPalButton
                       amount={totalPrice}
@@ -191,6 +232,23 @@ const OrderPage = ({ match }) => {
                   )}
                 </ListGroup.Item>
               )}
+              {userInfo &&
+                userInfo.isAdmin &&
+                order.isPaid &&
+                !order.isDelivered && (
+                  <ListGroup.Item className='d-grid'>
+                    <Button
+                      className='d-flex align-items-center justify-content-center'
+                      type='button'
+                      size='lg'
+                      onClick={deliverHandler}
+                      disabled={deliverLoading}
+                    >
+                      <span>Mark as Delivered</span>{' '}
+                      {deliverLoading && <Loader inline size='sm' />}
+                    </Button>
+                  </ListGroup.Item>
+                )}
             </ListGroup>
           </Card>
         </Col>

@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Button, Row, Col } from 'react-bootstrap';
-import Message from '../components/Message';
-import Loader from '../components/Loader';
+import Message from '../../components/Message';
+import Loader from '../../components/Loader';
 import {
   listProducts,
   deleteProduct,
   createProduct,
-} from '../actions/productActions';
-import { PRODUCT_CREATE_RESET } from '../constants/productConstants';
+} from '../../actions/productActions';
+import { PRODUCT_CREATE_RESET } from '../../constants/productConstants';
 
 const ProductListPage = ({ history, match }) => {
   const dispatch = useDispatch();

@@ -12,6 +12,10 @@ import {
   PRODUCT_CREATE_SUCCESS,
   PRODUCT_CREATE_FAIL,
   PRODUCT_CREATE_RESET,
+  PRODUCT_UPDATE_REQUEST,
+  PRODUCT_UPDATE_SUCCESS,
+  PRODUCT_UPDATE_FAIL,
+  PRODUCT_UPDATE_RESET,
 } from '../constants/productConstants';
 
 const initialState = {
@@ -32,6 +36,9 @@ export const productReducer = (state = initialState, action) => {
     case PRODUCT_CREATE_REQUEST:
       return { ...state, createLoading: true };
 
+    case PRODUCT_UPDATE_REQUEST:
+      return { ...state, updateLoading: true };
+
     case PRODUCT_LIST_SUCCESS:
       return { ...state, loading: false, products: payload };
 
@@ -43,6 +50,14 @@ export const productReducer = (state = initialState, action) => {
         ...state,
         createLoading: false,
         createSuccess: true,
+        product: payload,
+      };
+
+    case PRODUCT_UPDATE_SUCCESS:
+      return {
+        ...state,
+        updateLoading: false,
+        updateSuccess: true,
         product: payload,
       };
 
@@ -61,7 +76,15 @@ export const productReducer = (state = initialState, action) => {
         error: payload,
       };
 
+    case PRODUCT_UPDATE_FAIL:
+      return {
+        ...state,
+        updateLoading: false,
+        error: payload,
+      };
+
     case PRODUCT_CREATE_RESET:
+    case PRODUCT_UPDATE_RESET:
       return { ...state, product: { reviews: [] } };
 
     default:

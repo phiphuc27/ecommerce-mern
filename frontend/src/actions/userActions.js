@@ -23,7 +23,7 @@ import {
   USER_UPDATE_REQUEST,
   USER_UPDATE_SUCCESS,
 } from '../constants/userConstants';
-import { ORDER_GET_LIST_RESET } from '../constants/orderConstants';
+import { ORDER_MY_LIST_RESET } from '../constants/orderConstants';
 
 export const login = (email, password) => async (dispatch) => {
   try {
@@ -88,7 +88,7 @@ export const register = (name, email, password) => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   localStorage.removeItem('userInfo');
   dispatch({ type: USER_LOGOUT });
-  dispatch({ type: ORDER_GET_LIST_RESET });
+  dispatch({ type: ORDER_MY_LIST_RESET });
 };
 
 export const getUserProfile = (id) => async (dispatch, getState) => {
