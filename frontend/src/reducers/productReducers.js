@@ -16,10 +16,17 @@ import {
   PRODUCT_UPDATE_SUCCESS,
   PRODUCT_UPDATE_FAIL,
   PRODUCT_UPDATE_RESET,
+  PRODUCT_CREATE_REVIEW_REQUEST,
+  PRODUCT_CREATE_REVIEW_SUCCESS,
+  PRODUCT_CREATE_REVIEW_FAIL,
+  PRODUCT_TOP_REQUEST,
+  PRODUCT_TOP_SUCCESS,
+  PRODUCT_TOP_FAIL,
 } from '../constants/productConstants';
 
 const initialState = {
   products: [],
+  productsTop: [],
   product: { reviews: [] },
 };
 
@@ -31,6 +38,7 @@ export const productReducer = (state = initialState, action) => {
       return { ...initialState, loading: true };
 
     case PRODUCT_DELETE_REQUEST:
+    case PRODUCT_TOP_REQUEST:
       return { ...state, loading: true };
 
     case PRODUCT_CREATE_REQUEST:
@@ -39,8 +47,20 @@ export const productReducer = (state = initialState, action) => {
     case PRODUCT_UPDATE_REQUEST:
       return { ...state, updateLoading: true };
 
+    case PRODUCT_CREATE_REVIEW_REQUEST:
+      return { ...state, createReviewLoading: true };
+
     case PRODUCT_LIST_SUCCESS:
-      return { ...state, loading: false, products: payload };
+      return {
+        ...state,
+        loading: false,
+        products: payload.products,
+        pages: payload.pages,
+        page: payload.page,
+      };
+
+    case PRODUCT_TOP_SUCCESS:
+      return { ...state, productsTop: payload };
 
     case PRODUCT_DETAILS_SUCCESS:
       return { ...state, loading: false, product: payload };
@@ -64,9 +84,17 @@ export const productReducer = (state = initialState, action) => {
     case PRODUCT_DELETE_SUCCESS:
       return { ...state, loading: false, deleteSuccess: true };
 
+    case PRODUCT_CREATE_REVIEW_SUCCESS:
+      return {
+        ...state,
+        createReviewLoading: false,
+        createReviewSuccess: true,
+      };
+
     case PRODUCT_LIST_FAIL:
     case PRODUCT_DETAILS_FAIL:
     case PRODUCT_DELETE_FAIL:
+    case PRODUCT_TOP_FAIL:
       return { ...state, loading: false, error: payload };
 
     case PRODUCT_CREATE_FAIL:
@@ -83,9 +111,16 @@ export const productReducer = (state = initialState, action) => {
         error: payload,
       };
 
+    case PRODUCT_CREATE_REVIEW_FAIL:
+      return {
+        ...state,
+        createReviewLoading: false,
+        createReviewError: payload,
+      };
+
     case PRODUCT_CREATE_RESET:
     case PRODUCT_UPDATE_RESET:
-      return { ...state, product: { reviews: [] } };
+      return { ...initialState, products: state.products };
 
     default:
       return state;
