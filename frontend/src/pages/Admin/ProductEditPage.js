@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import Message from '../../components/Message';
@@ -15,13 +17,6 @@ import { PRODUCT_UPDATE_RESET } from '../../constants/productConstants';
 const ProductEditPage = ({ history, match }) => {
   const productId = match.params.id;
 
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState(0);
-  const [image, setImage] = useState('');
-  const [brand, setBrand] = useState('');
-  const [category, setCategory] = useState('');
-  const [countInStock, setCountInStock] = useState(0);
-  const [description, setDescription] = useState('');
   const [uploading, setUploading] = useState(false);
 
   const dispatch = useDispatch();
@@ -29,6 +24,41 @@ const ProductEditPage = ({ history, match }) => {
   const { loading, error, product, updateLoading, updateSuccess } = useSelector(
     (state) => state.product
   );
+
+  const productEditSchema = Yup.object().shape({
+    name: Yup.string().required('Required'),
+    price: Yup.number().required('Required'),
+    image: Yup.string().required('Required'),
+    brand: Yup.string().required('Required'),
+    category: Yup.string().required('Required'),
+    countInStock: Yup.number().required('Required'),
+    description: Yup.string().required('Required'),
+  });
+
+  const {
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    setValues,
+    setFieldValue,
+    values,
+    errors,
+  } = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      name: '',
+      price: 0,
+      image: '',
+      brand: '',
+      category: '',
+      countInStock: 0,
+      description: '',
+    },
+    validationSchema: productEditSchema,
+    onSubmit: (values) => {
+      dispatch(updateProduct({ ...values, _id: productId }));
+    },
+  });
 
   useEffect(() => {
     if (updateSuccess) {
@@ -41,15 +71,17 @@ const ProductEditPage = ({ history, match }) => {
     if (!product._id || product._id !== productId) {
       dispatch(listProductDetails(productId));
     } else {
-      setName(product.name);
-      setPrice(product.price);
-      setImage(product.image);
-      setBrand(product.brand);
-      setCategory(product.category);
-      setCountInStock(product.countInStock);
-      setDescription(product.description);
+      setValues({
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        brand: product.brand,
+        category: product.category,
+        countInStock: product.countInStock,
+        description: product.description,
+      });
     }
-  }, [dispatch, productId, product]);
+  }, [dispatch, productId, product, setValues]);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
@@ -66,28 +98,12 @@ const ProductEditPage = ({ history, match }) => {
 
       const { data } = await axios.post('/api/upload', formData, config);
 
-      setImage(data);
+      setFieldValue('image', data);
       setUploading(false);
     } catch (error) {
       console.error(error);
       setUploading(false);
     }
-  };
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    dispatch(
-      updateProduct({
-        _id: productId,
-        name,
-        price,
-        image,
-        brand,
-        category,
-        countInStock,
-        description,
-      })
-    );
   };
 
   return (
@@ -102,34 +118,46 @@ const ProductEditPage = ({ history, match }) => {
         ) : error ? (
           <Message variant='danger'>{error}</Message>
         ) : (
-          <Form onSubmit={submitHandler}>
+          <Form onSubmit={handleSubmit}>
             <Form.Group className='mb-3' controlId='name'>
-              <Form.Label>Name</Form.Label>
+              <Form.Label>Username</Form.Label>
               <Form.Control
-                type='name'
-                placeholder='Name'
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                type='text'
+                className={errors.name && 'is-invalid'}
+                placeholder='Username'
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
               ></Form.Control>
+              {errors.name && (
+                <div className='invalid-feedback'>{errors.name}</div>
+              )}
             </Form.Group>
 
             <Form.Group className='mb-3' controlId='price'>
               <Form.Label>Price</Form.Label>
               <Form.Control
                 type='number'
+                className={errors.price && 'is-invalid'}
                 placeholder='Price'
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                value={values.price}
+                onChange={handleChange}
+                onBlur={handleBlur}
               ></Form.Control>
+              {errors.price && (
+                <div className='invalid-feedback'>{errors.price}</div>
+              )}
             </Form.Group>
 
             <Form.Group className='mb-3' controlId='image'>
               <Form.Label>Image</Form.Label>
               <Form.Control
                 type='text'
+                className={errors.image && 'is-invalid'}
                 placeholder='Image Url'
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
+                value={values.image}
+                onChange={handleChange}
+                onBlur={handleBlur}
               ></Form.Control>
               <Form.File
                 id='image-file'
@@ -137,47 +165,69 @@ const ProductEditPage = ({ history, match }) => {
                 onChange={uploadFileHandler}
               ></Form.File>
               {uploading && <Loader inline size='sm' />}
+              {errors.image && (
+                <div className='invalid-feedback'>{errors.image}</div>
+              )}
             </Form.Group>
 
             <Form.Group className='mb-3' controlId='brand'>
               <Form.Label>Brand</Form.Label>
               <Form.Control
                 type='text'
+                className={errors.brand && 'is-invalid'}
                 placeholder='Brand'
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
+                value={values.brand}
+                onChange={handleChange}
+                onBlur={handleBlur}
               ></Form.Control>
+              {errors.brand && (
+                <div className='invalid-feedback'>{errors.brand}</div>
+              )}
             </Form.Group>
 
             <Form.Group className='mb-3' controlId='countInStock'>
               <Form.Label>Count In Stock</Form.Label>
               <Form.Control
                 type='number'
-                placeholder='Count In Stock'
-                value={countInStock}
-                onChange={(e) => setCountInStock(e.target.value)}
+                className={errors.countInStock && 'is-invalid'}
+                placeholder='Count in stock'
+                value={values.countInStock}
+                onChange={handleChange}
+                onBlur={handleBlur}
               ></Form.Control>
+              {errors.countInStock && (
+                <div className='invalid-feedback'>{errors.countInStock}</div>
+              )}
             </Form.Group>
 
             <Form.Group className='mb-3' controlId='category'>
               <Form.Label>Category</Form.Label>
               <Form.Control
                 type='text'
+                className={errors.category && 'is-invalid'}
                 placeholder='Category'
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                value={values.category}
+                onChange={handleChange}
+                onBlur={handleBlur}
               ></Form.Control>
+              {errors.category && (
+                <div className='invalid-feedback'>{errors.category}</div>
+              )}
             </Form.Group>
 
             <Form.Group className='mb-3' controlId='description'>
               <Form.Label>Description</Form.Label>
               <Form.Control
-                as='textarea'
-                rows={5}
+                type='text'
+                className={errors.description && 'is-invalid'}
                 placeholder='Description'
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={values.description}
+                onChange={handleChange}
+                onBlur={handleBlur}
               ></Form.Control>
+              {errors.description && (
+                <div className='invalid-feedback'>{errors.description}</div>
+              )}
             </Form.Group>
 
             <div className='d-flex align-items-center'>
