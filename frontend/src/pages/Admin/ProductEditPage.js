@@ -159,12 +159,14 @@ const ProductEditPage = ({ history, match }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
               ></Form.Control>
-              <Form.File
+              <Form.Control
                 id='image-file'
+                type='file'
+                className='form-control'
                 label='Choose File'
                 onChange={uploadFileHandler}
-              ></Form.File>
-              {uploading && <Loader inline size='sm' />}
+              ></Form.Control>
+              {uploading && <Loader size='sm' />}
               {errors.image && (
                 <div className='invalid-feedback'>{errors.image}</div>
               )}
@@ -218,7 +220,8 @@ const ProductEditPage = ({ history, match }) => {
             <Form.Group className='mb-3' controlId='description'>
               <Form.Label>Description</Form.Label>
               <Form.Control
-                type='text'
+                as='textarea'
+                rows={5}
                 className={errors.description && 'is-invalid'}
                 placeholder='Description'
                 value={values.description}

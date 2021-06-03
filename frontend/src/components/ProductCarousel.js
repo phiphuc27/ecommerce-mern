@@ -6,11 +6,11 @@ import { listTopProducts } from '../actions/productActions';
 
 const ProductCarousel = () => {
   const dispatch = useDispatch();
-  const { productsTop } = useSelector((state) => state.product);
+  const { productsTop, page } = useSelector((state) => state.product);
 
   useEffect(() => {
     dispatch(listTopProducts());
-  }, [dispatch]);
+  }, [dispatch, page]);
 
   return (
     <Carousel pause='hover' className='bg-primary'>

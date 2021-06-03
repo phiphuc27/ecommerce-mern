@@ -57,18 +57,14 @@ const Header = () => {
                   </NavDropdown.Item>
                 </NavDropdown>
               ) : (
-                <>
-                  <Nav.Item>
-                    <LinkContainer to='/login'>
-                      <Nav.Link>Sign In</Nav.Link>
-                    </LinkContainer>
-                  </Nav.Item>
-                  <Nav.Item>
-                    <LinkContainer to='/register'>
-                      <Nav.Link>Sign Up</Nav.Link>
-                    </LinkContainer>
-                  </Nav.Item>
-                </>
+                <NavDropdown title='Account' id='account'>
+                  <LinkContainer to='/register'>
+                    <NavDropdown.Item>Sign Up</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to='/login'>
+                    <NavDropdown.Item>Sign In</NavDropdown.Item>
+                  </LinkContainer>
+                </NavDropdown>
               )}
             </Nav>
           </Navbar.Collapse>

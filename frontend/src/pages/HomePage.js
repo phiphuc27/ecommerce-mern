@@ -5,13 +5,14 @@ import Product from '../components/Product';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import Paginate from '../components/Paginate';
-import ProductCarousel from '../components/ProductCarousel';
+
 import { listProducts } from '../actions/productActions';
 
-const HomePage = ({ match }) => {
-  const keyword = match.params.keyword;
+const HomePage = ({ match, location }) => {
+  const query = new URLSearchParams(location.search);
 
-  const pageNum = match.params.page || 1;
+  const keyword = query.get('keyword') || '';
+  const pageNum = query.get('page') || 1;
 
   const dispatch = useDispatch();
 
@@ -25,7 +26,6 @@ const HomePage = ({ match }) => {
 
   return (
     <>
-      {!keyword && <ProductCarousel />}
       {keyword ? (
         <h1>Search result for '{keyword}'</h1>
       ) : (
@@ -47,6 +47,7 @@ const HomePage = ({ match }) => {
           <Paginate
             pages={pages}
             page={page}
+            to='/'
             keyword={keyword ? keyword : ''}
           />
         </>

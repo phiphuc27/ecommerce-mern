@@ -60,7 +60,7 @@ export const productReducer = (state = initialState, action) => {
       };
 
     case PRODUCT_TOP_SUCCESS:
-      return { ...state, productsTop: payload };
+      return { ...state, loading: false, productsTop: payload };
 
     case PRODUCT_DETAILS_SUCCESS:
       return { ...state, loading: false, product: payload };

@@ -2,6 +2,7 @@ import { Container } from 'react-bootstrap';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ProductCarousel from './components/ProductCarousel';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
@@ -22,6 +23,7 @@ const App = () => {
   return (
     <Router>
       <Header />
+      <Route path='/' render={() => <ProductCarousel />} exact />
       <main className='py-3'>
         <Container>
           <Route path='/order/:id' component={OrderPage} exact />
@@ -37,23 +39,12 @@ const App = () => {
           <Route path='/admin/user/:id/edit' component={UserEditPage} exact />
           <Route path='/admin/product' component={ProductListPage} exact />
           <Route
-            path='/admin/product/:page'
-            component={ProductListPage}
-            exact
-          />
-          <Route
             path='/admin/product/:id/edit'
             component={ProductEditPage}
             exact
           />
           <Route path='/admin/order' component={OrderListPage} exact />
-          <Route path='/search/:keyword' component={HomePage} exact />
-          <Route path='/page/:page' component={HomePage} exact />
-          <Route
-            path='/search/:keyword/page/:page'
-            component={HomePage}
-            exact
-          />
+          <Route path='/search' component={HomePage} exact />
           <Route path='/' component={HomePage} exact />
         </Container>
       </main>

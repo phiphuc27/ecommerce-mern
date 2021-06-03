@@ -6,6 +6,8 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { createOrder } from '../actions/orderActions';
+import { resetCart } from '../actions/cartActions';
+import { ORDER_CREATE_RESET } from '../constants/orderConstants';
 
 const PlaceOrderPage = ({ history }) => {
   const dispatch = useDispatch();
@@ -31,10 +33,12 @@ const PlaceOrderPage = ({ history }) => {
 
   useEffect(() => {
     if (success) {
+      dispatch(resetCart());
       history.push(`/order/${order._id}`);
+      dispatch({ type: ORDER_CREATE_RESET });
     }
     // eslint-disable-next-line
-  }, [history, success]);
+  }, [dispatch, history, success]);
 
   const placeOrderHandler = () => {
     dispatch(

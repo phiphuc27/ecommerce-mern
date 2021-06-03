@@ -67,7 +67,13 @@ export const userReducer = (state = initialState, action) => {
       return { ...state, updateLoading: false, updateSuccess: true };
 
     case USER_LIST_SUCCESS:
-      return { ...state, loading: false, users: payload };
+      return {
+        ...state,
+        loading: false,
+        users: payload.users,
+        page: payload.page,
+        pages: payload.pages,
+      };
     case USER_DELETE_SUCCESS:
       return { ...state, loading: false, deleteSuccess: true };
 

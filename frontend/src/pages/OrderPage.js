@@ -122,7 +122,7 @@ const OrderPage = ({ match, history }) => {
               </p>
               <p>
                 <strong>Email: </strong>
-                <a href={`mailto:${user.email}`}>{user.email}</a>
+                <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
               </p>
               <p>
                 <strong>Address: </strong>
@@ -221,7 +221,7 @@ const OrderPage = ({ match, history }) => {
               </ListGroup.Item>
               {userInfo && userInfo._id === order.user._id && !order.isPaid && (
                 <ListGroup.Item>
-                  {!payLoading && <Loader size='sm' className='mb-2' />}
+                  {payLoading && <Loader size='sm' className='mb-2' />}
                   {!sdkReady ? (
                     <Loader className='mb-2' />
                   ) : (

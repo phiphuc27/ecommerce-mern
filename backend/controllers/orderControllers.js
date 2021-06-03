@@ -21,7 +21,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
   } else {
     const order = new Order({
       orderItems,
-      user: req.user._id,
+      user: req.user.id,
       shippingAddress,
       paymentMethod,
       itemsPrice,
@@ -90,8 +90,17 @@ const getMyOrders = asyncHandler(async (req, res) => {
 // @route     GET /api/orders
 // @access    Private/Admin
 const getOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find({}).populate('user', 'id name');
-  res.json(orders);
+  const pageSize = 12;
+  const page = Number(req.query.page) || 1;
+
+  const count = await Order.countDocuments({});
+
+  const orders = await Order.find({})
+    .populate('user', 'id name')
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+
+  res.json({ orders, page, pages: Math.ceil(count / pageSize) });
 });
 
 // @des       Update order to delivered

@@ -12,8 +12,10 @@ import {
 } from '../../actions/productActions';
 import { PRODUCT_CREATE_RESET } from '../../constants/productConstants';
 
-const ProductListPage = ({ history, match }) => {
-  const pageNum = match.params.page || 1;
+const ProductListPage = ({ history, location }) => {
+  const query = new URLSearchParams(location.search);
+
+  const pageNum = query.get('page') || '';
 
   const dispatch = useDispatch();
 
@@ -122,7 +124,7 @@ const ProductListPage = ({ history, match }) => {
                 ))}
             </tbody>
           </Table>
-          <Paginate pages={pages} page={page} isAdmin />
+          <Paginate pages={pages} page={page} to='/admin/product' />
         </>
       )}
     </>

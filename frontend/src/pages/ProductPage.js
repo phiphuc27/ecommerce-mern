@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import {
@@ -24,9 +26,6 @@ const ProductPage = ({ history, match }) => {
   const productId = match.params.id;
   const [qty, setQty] = useState(1);
 
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
-
   const dispatch = useDispatch();
 
   const {
@@ -40,6 +39,24 @@ const ProductPage = ({ history, match }) => {
 
   const { userInfo } = useSelector((state) => state.user);
 
+  const reviewSchema = Yup.object().shape({
+    rating: Yup.string().required('Required'),
+    comment: Yup.string().required('Required'),
+  });
+
+  const { handleChange, handleBlur, handleSubmit, values, errors, resetForm } =
+    useFormik({
+      initialValues: {
+        rating: '',
+        comment: '',
+      },
+      validationSchema: reviewSchema,
+      onSubmit: (values) => {
+        const { rating, comment } = values;
+        dispatch(createProductReview(match.params.id, { rating, comment }));
+      },
+    });
+
   useEffect(() => {
     dispatch(listProductDetails(productId));
   }, [dispatch, productId]);
@@ -47,19 +64,13 @@ const ProductPage = ({ history, match }) => {
   useEffect(() => {
     if (createReviewSuccess) {
       alert('Review Submitted');
-      setRating(0);
-      setComment('');
+      resetForm();
       dispatch(listProductDetails(productId));
     }
-  }, [createReviewSuccess, dispatch, productId]);
+  }, [createReviewSuccess, dispatch, productId, resetForm]);
 
   const addToCartHandler = () => {
     history.push(`/cart/${match.params.id}?qty=${qty}`);
-  };
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    dispatch(createProductReview(match.params.id, { rating, comment }));
   };
 
   return (
@@ -151,7 +162,7 @@ const ProductPage = ({ history, match }) => {
             </Col>
           </Row>
           <Row className='mt-4'>
-            <Col md={6}>
+            <Col md={12}>
               <h2>Reviews</h2>
               {product.reviews.length === 0 && (
                 <Message variant='light'>No Reviews</Message>
@@ -159,10 +170,22 @@ const ProductPage = ({ history, match }) => {
               <ListGroup variant='flush'>
                 {product.reviews.map((review) => (
                   <ListGroup.Item key={review._id}>
-                    <strong>{review.name}</strong>
-                    <Rating value={review.rating} />
-                    <p>{review.createdAt.substring(0, 10)}</p>
-                    <p>{review.comment}</p>
+                    <Card className='bg-light'>
+                      <Card.Body>
+                        <div className='d-flex justify-content-between'>
+                          <div>
+                            <Card.Title>
+                              <strong>{review.name}</strong>
+                            </Card.Title>
+                            <Rating value={review.rating} />
+                          </div>
+                          <Card.Text className='text-muted'>
+                            {review.createdAt.substring(0, 10)}
+                          </Card.Text>
+                        </div>
+                        <Card.Text>{review.comment}</Card.Text>
+                      </Card.Body>
+                    </Card>
                   </ListGroup.Item>
                 ))}
                 <ListGroup.Item>
@@ -171,13 +194,15 @@ const ProductPage = ({ history, match }) => {
                     <Message variant='danger'>{createReviewError}</Message>
                   )}
                   {userInfo ? (
-                    <Form onSubmit={submitHandler}>
+                    <Form onSubmit={handleSubmit}>
                       <Form.Group className='mb-4' controlId='rating'>
                         <Form.Label>Rating</Form.Label>
                         <Form.Control
                           as='select'
-                          value={rating}
-                          onChange={(e) => setRating(e.target.value)}
+                          value={values.rating}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          className={errors.rating && 'is-invalid'}
                         >
                           <option value=''>Select...</option>
                           <option value='1'>1 - Very Bad</option>
@@ -186,15 +211,27 @@ const ProductPage = ({ history, match }) => {
                           <option value='4'>4 - Good</option>
                           <option value='5'>5 - Very Good</option>
                         </Form.Control>
+                        {errors.rating && (
+                          <div className='invalid-feedback'>
+                            {errors.rating}
+                          </div>
+                        )}
                       </Form.Group>
                       <Form.Group className='mb-4' controlId='comment'>
                         <Form.Label>Comment</Form.Label>
                         <Form.Control
                           as='textarea'
-                          row='3'
-                          value={comment}
-                          onChange={(e) => setComment(e.target.value)}
+                          rows={5}
+                          value={values.comment}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          className={errors.comment && 'is-invalid'}
                         ></Form.Control>
+                        {errors.comment && (
+                          <div className='invalid-feedback'>
+                            {errors.comment}
+                          </div>
+                        )}
                       </Form.Group>
                       <div className='d-flex align-items-center'>
                         <Button

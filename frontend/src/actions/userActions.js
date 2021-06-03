@@ -148,33 +148,35 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
   }
 };
 
-export const listUsers = () => async (dispatch, getState) => {
-  try {
-    dispatch({ type: USER_LIST_REQUEST });
+export const listUsers =
+  (page = '') =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({ type: USER_LIST_REQUEST });
 
-    const {
-      user: { userInfo },
-    } = getState();
+      const {
+        user: { userInfo },
+      } = getState();
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
 
-    const { data } = await axios.get(`/api/users`, config);
+      const { data } = await axios.get(`/api/users?page=${page}`, config);
 
-    dispatch({ type: USER_LIST_SUCCESS, payload: data });
-  } catch (error) {
-    dispatch({
-      type: USER_LIST_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
+      dispatch({ type: USER_LIST_SUCCESS, payload: data });
+    } catch (error) {
+      dispatch({
+        type: USER_LIST_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
 
 export const deleteUser = (id) => async (dispatch, getState) => {
   try {
